@@ -10,7 +10,7 @@ public class BaseService : IBaseService, IDisposable
     public BaseService(IHttpClientFactory httpClient)
     {
         HttpClient = httpClient;
-        ResponseDto = new ResponseDto();
+        _responseDto = new ResponseDto();
     }
 
     public void Dispose()
@@ -21,9 +21,10 @@ public class BaseService : IBaseService, IDisposable
     public ResponseDto ResponseModel { get; set; }
 
     public IHttpClientFactory HttpClient { get; set; }
-    public ResponseDto ResponseDto { get; }
 
-    public async Task<T> SendAsync<T>(ApiRequest apiRequest)
+    private ResponseDto _responseDto;
+
+    public async Task<object> SendAsync<T>(ApiRequest apiRequest)
     {
         try
         {
@@ -31,6 +32,7 @@ public class BaseService : IBaseService, IDisposable
             HttpRequestMessage requestMessage = new HttpRequestMessage();
             requestMessage.Headers.Add("accept","application/json");
             requestMessage.RequestUri = new Uri(apiRequest.Url);
+            httpClient.DefaultRequestHeaders.Clear();
             if (apiRequest.Data != null)
             {
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data), Encoding.UTF8,"application/json");
@@ -54,13 +56,26 @@ public class BaseService : IBaseService, IDisposable
             };
             var response = httpClient.SendAsync(requestMessage).Result;
             var content = await response.Content.ReadAsStringAsync();
-            var deserializeObject = JsonConvert.DeserializeObject<T>(content);
-            return deserializeObject;
+            var deserializeObject = JsonConvert.DeserializeObject<object>(content);
+            _responseDto.Result  = deserializeObject;
+            if(_responseDto.Result != null)
+            {
+                _responseDto.IsSucess = true;
+            }
+            return _responseDto;
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            var dto = new ResponseDto
+            {
+                DisplayMessage = "Error",
+                ErrorMessages = new List<string> { Convert.ToString(e.Message) },
+                IsSucess = false
+            };
+            var res = JsonConvert.SerializeObject(dto);
+            var apiResponseDto = JsonConvert.DeserializeObject<T>(res);
+            return apiResponseDto;
+          
         }
        
     }

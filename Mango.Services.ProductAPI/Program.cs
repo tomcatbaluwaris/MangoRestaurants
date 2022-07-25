@@ -3,6 +3,7 @@ using Mango.Services.ProductAPI.DbContexts;
 using Mango.Services.ProductAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 var mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);

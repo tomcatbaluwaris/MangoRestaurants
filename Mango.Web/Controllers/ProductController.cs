@@ -19,13 +19,19 @@ public class ProductController : Controller
     public async Task<IActionResult> ProductIndex()
     {
         List<ProductDto> list = new();
-        var response = await _productService.GetAllProductsAsync<ResponseDto>();
+        var response = await _productService.GetAllProductsAsync<object>();        
+        ResponseDto responseDto = (ResponseDto)response;
         if (response == null) throw new ArgumentNullException(nameof(response));
-        if (response.IsSucess)
+        if (responseDto.IsSucess)
         {
-            list = JsonConvert.DeserializeObject<List<ProductDto>>(Convert.ToString(response.Result));
+            list = JsonConvert.DeserializeObject<List<ProductDto>>(Convert.ToString(responseDto.Result));
         }
 
         return View(list);
+    }
+
+    public IActionResult Create()
+    {
+        throw new NotImplementedException();
     }
 }
