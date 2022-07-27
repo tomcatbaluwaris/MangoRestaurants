@@ -56,8 +56,10 @@ public class ProductController : Controller
             if (responseDto != null && responseDto.IsSucess)
             {
               productDto = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(responseDto.Result));
+              return View(productDto);
             }
-            return View(productDto);
+
+            return NotFound();
     }
 
     [HttpPost]
@@ -67,14 +69,13 @@ public class ProductController : Controller
         object model = null;
         if (ModelState.IsValid)
         {
-            model = await _productService.UpdateProductAsync<ResponseDto>(productDto);
-            ResponseDto responseDto =   (ResponseDto)model;
+            ResponseDto responseDto = await _productService.UpdateProductAsync<ResponseDto>(productDto) as ResponseDto;
             if (responseDto != null && responseDto.IsSucess)
             {
                 return RedirectToAction(nameof(ProductIndex));
             }
         }
-        return View(model);
+        return View(productDto);
     }
 
     public IActionResult Delete()

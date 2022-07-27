@@ -52,7 +52,7 @@ public class ProductService : BaseService, IProductService
         var apiProducts = "/api/products";
         return await SendAsync<T>(new ApiRequest() 
             {
-                ApiType = SD.ApiType.Put,
+                ApiType = SD.ApiType.Post,
                 Data = productDto,
                 Url = $"{SD.ProductApiBase}{apiProducts}",
                 AccessToken = ""
