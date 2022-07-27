@@ -8,14 +8,14 @@ namespace Mango.Services.ProductAPI.Controllers;
 [Route("api/products")]
 public class ProductAPIController : ControllerBase
 {
-    public ResponseDto response;
 
     public IProductRepository productRepository;
+    private readonly ResponseDto _response;
 
     public ProductAPIController(IProductRepository productRepository)
     {
         this.productRepository = productRepository;
-        this.response = new ResponseDto();
+        _response = new ResponseDto();
     }
 
     // GET
@@ -25,13 +25,13 @@ public class ProductAPIController : ControllerBase
         try
         {
             var products = await productRepository.GetProducts();
-            this.response.Result = products;
-            return this.response.Result;
+            _response.Result = products;
+            return _response;
         }
         catch (Exception e)
         {
-            this.response.IsSucess = false;
-            this.response.ErrorMessages =
+            _response.IsSucess = false;
+            _response.ErrorMessages =
                 new List<string>()
                 {
                     e.Message.ToString()
@@ -43,20 +43,20 @@ public class ProductAPIController : ControllerBase
     }
 
     [HttpGet]
-    [Route("id")]
+    [Route("{id}")]
     public async Task<object> GetProductById(int id)
     {
         try
         {
             var product = await productRepository.GetProductById(id);
             if (product == null) throw new ArgumentNullException(nameof(product));
-            this.response.Result = product;
-            return this.response.Result;
+            _response.Result = product;
+            return _response;
         }
         catch (Exception e)
         {
-            this.response.IsSucess = false;
-            this.response.ErrorMessages =
+            _response.IsSucess = false;
+            _response.ErrorMessages =
                 new List<string>()
                 {
                     e.Message.ToString()
@@ -73,13 +73,13 @@ public class ProductAPIController : ControllerBase
         {
             var updateProduct = await productRepository.CreateUpdateProduct(product);
             if (updateProduct == null) throw new ArgumentNullException(nameof(product));
-            this.response.Result = updateProduct;
-            return this.response.Result;
+            _response.Result = updateProduct;
+            return _response;
         }
         catch (Exception e)
         {
-            this.response.IsSucess = false;
-            this.response.ErrorMessages =
+            _response.IsSucess = false;
+            _response.ErrorMessages =
                 new List<string>()
                 {
                     e.Message.ToString()
@@ -90,19 +90,19 @@ public class ProductAPIController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<object> Post(ProductDto productDto)
+    public async Task<object> Post([FromBody]  ProductDto productDto)
     {
         try
         {
             var product = await productRepository.CreateUpdateProduct(productDto);
             if (product == null) throw new ArgumentNullException(nameof(product));
-            this.response.Result = product;
-            return this.response.Result;
+            _response.Result = product;
+            return _response;
         }
         catch (Exception e)
         {
-            this.response.IsSucess = false;
-            this.response.ErrorMessages =
+            _response.IsSucess = false;
+            _response.ErrorMessages =
                 new List<string>()
                 {
                     e.Message.ToString()
@@ -119,13 +119,13 @@ public class ProductAPIController : ControllerBase
             try
             {
                 var isDeleteProduct = await productRepository.DeleteProduct(productDto.ProductId);
-                this.response.Result = isDeleteProduct;
-                return this.response.Result;
+                _response.Result = isDeleteProduct;
+                return _response;
             }
             catch (Exception e)
             {
-                this.response.IsSucess = false;
-                this.response.ErrorMessages =
+                _response.IsSucess = false;
+                _response.ErrorMessages =
                     new List<string>()
                     {
                         e.Message.ToString()

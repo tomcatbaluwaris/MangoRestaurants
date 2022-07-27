@@ -7,11 +7,11 @@ public interface IProductService
     
     Task<object> GetAllProductsAsync<T>();
 
-    // Task<T?> GetProductByIdAsync<T>(int id);
+    Task<object> GetProductByIdAsync<T>(int id);
     //
-    // Task<T?> CreateProductAsync<T>(ProductDto productDto);
+    Task<object> CreateProductAsync<T>(ProductDto productDto);
     //
-    // Task<T?> UpdateProductAsync<T>(ProductDto productDto);
+    Task<object> UpdateProductAsync<T>(ProductDto productDto);
     //
     // Task<T?> DeleteProductAsync<T>(int productId);
 

@@ -35,9 +35,15 @@ public class BaseService : IBaseService, IDisposable
             httpClient.DefaultRequestHeaders.Clear();
             if (apiRequest.Data != null)
             {
-                requestMessage.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data), Encoding.UTF8,"application/json");
+               
+                if (apiRequest.Data != null)
+                {
+                    requestMessage.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data),
+                        Encoding.UTF8, "application/json");
+                }
             }
 
+            HttpResponseMessage response = null;
             switch (apiRequest.ApiType)
             {
             
@@ -54,11 +60,10 @@ public class BaseService : IBaseService, IDisposable
                     requestMessage.Method = HttpMethod.Get;
                     break;
             };
-            var response = httpClient.SendAsync(requestMessage).Result;
+            response = await httpClient.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
-            var deserializeObject = JsonConvert.DeserializeObject<object>(content);
-            _responseDto.Result  = deserializeObject;
-            if(_responseDto.Result != null)
+            _responseDto = JsonConvert.DeserializeObject<ResponseDto>(content);
+            if(response != null)
             {
                 _responseDto.IsSucess = true;
             }

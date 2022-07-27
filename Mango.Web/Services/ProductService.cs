@@ -12,18 +12,6 @@ public class ProductService : BaseService, IProductService
         _httpClientFactory = httpClientFactory;
     }
 
-    // public async Task<T> GetAllProductsAsync<T>()
-    // {
-    //     var apiProducts = "/api/products/";
-    //     return await SendAsync<T>(new ApiRequest() 
-    //         {
-    //             ApiType = SD.ApiType.Get,
-    //             Url = $"{SD.ProductApiBase}{apiProducts}",
-    //             AccessToken = ""
-    //         }
-    //     );
-    //     
-    // }
     
     public async Task<object> GetAllProductsAsync<T>()
     {
@@ -34,46 +22,44 @@ public class ProductService : BaseService, IProductService
             AccessToken = ""
         });
     }
-
-    // public async Task<T> GetProductByIdAsync<T>(int id)
-    // {
-    //     var apiProducts = "/api/products/";
-    //     return await SendAsync<T>(new ApiRequest() 
-    //         {
-    //             ApiType = SD.ApiType.Get,
-    //             Url = $"{SD.ProductApiBase}{apiProducts}{id}",
-    //             AccessToken = ""
-    //         }
-    //     );
-    // }
-    //
-    // public async Task<T> CreateProductAsync<T>(ProductDto productDto)
-    // {
-    //     var apiProducts = "/api/products";
-    //     return await SendAsync<T>(new ApiRequest() 
-    //     {
-    //         ApiType = SD.ApiType.Post,
-    //         Data = productDto,
-    //         Url = $"{SD.ProductApiBase}{apiProducts}",
-    //         AccessToken = ""
-    //         
-    //     }
-    //     );
-    // }
-    //
-    // public async Task<T> UpdateProductAsync<T>(ProductDto productDto)
-    // {
-    //     var apiProducts = "/api/products";
-    //     return await SendAsync<T>(new ApiRequest() 
-    //         {
-    //             ApiType = SD.ApiType.Put,
-    //             Data = productDto,
-    //             Url = $"{SD.ProductApiBase}{apiProducts}",
-    //             AccessToken = ""
-    //         
-    //         }
-    //     );
-    // }
+    
+    public async Task<object> GetProductByIdAsync<T>(int id)
+    {
+        return await this.SendAsync<object>(new ApiRequest()
+        {
+            ApiType = SD.ApiType.Get,
+            Url = SD.ProductApiBase + "/api/products/"+id,
+            AccessToken = ""
+        });
+    }
+    
+    public async Task<object> CreateProductAsync<T>(ProductDto productDto)
+    {
+        var apiProducts = "/api/products";
+        return await SendAsync<T>(new ApiRequest() 
+            {
+                ApiType = SD.ApiType.Post,
+                Data = productDto,
+                Url = $"{SD.ProductApiBase}{apiProducts}",
+                AccessToken = ""
+            
+            }
+        );
+    }
+    
+    public async Task<object> UpdateProductAsync<T>(ProductDto productDto)
+    {
+        var apiProducts = "/api/products";
+        return await SendAsync<T>(new ApiRequest() 
+            {
+                ApiType = SD.ApiType.Put,
+                Data = productDto,
+                Url = $"{SD.ProductApiBase}{apiProducts}",
+                AccessToken = ""
+            
+            }
+        );
+    }
     //
     // public async Task<T> DeleteProductAsync<T>(int productId)
     // {

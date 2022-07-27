@@ -15,22 +15,69 @@ public class ProductController : Controller
     {
         _productService = productService;
     }
-    // GET
+    
     public async Task<IActionResult> ProductIndex()
     {
-        List<ProductDto> list = new();
-        var response = await _productService.GetAllProductsAsync<object>();        
+        List<ProductDto>? list = new List<ProductDto>();
+        var response = await _productService.GetAllProductsAsync<ResponseDto>();
         ResponseDto responseDto = (ResponseDto)response;
-        if (response == null) throw new ArgumentNullException(nameof(response));
-        if (responseDto.IsSucess)
+        var jsonString = Convert.ToString(responseDto.Result);
+        if (responseDto != null && responseDto.IsSucess)
         {
-            list = JsonConvert.DeserializeObject<List<ProductDto>>(Convert.ToString(responseDto.Result));
+          list = JsonConvert.DeserializeObject<List<ProductDto>>(jsonString);
         }
 
         return View(list);
     }
+    public async Task<IActionResult> ProductCreate()
+    {
+        return View();
+    }
+    public async Task<IActionResult> ProductCreate(ProductDto productDto)
+    {
+        object model = null;
+        if (ModelState.IsValid)
+        {
+            model = await _productService.CreateProductAsync<ResponseDto>(productDto);
+            ResponseDto responseDto =   (ResponseDto)model;
+            if (responseDto != null && responseDto.IsSucess)
+            {
+                return RedirectToAction(nameof(ProductIndex));
+            }
+        }
+        return View(model);
+    }
 
-    public IActionResult Create()
+    public async Task<IActionResult> ProductEdit(int productId)
+    {
+      var  response = await _productService.GetProductByIdAsync<ResponseDto>(productId);
+            ResponseDto responseDto =   (ResponseDto)response;
+            ProductDto productDto = new ProductDto();
+            if (responseDto != null && responseDto.IsSucess)
+            {
+              productDto = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(responseDto.Result));
+            }
+            return View(productDto);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ProductEdit(ProductDto productDto)
+    {
+        object model = null;
+        if (ModelState.IsValid)
+        {
+            model = await _productService.UpdateProductAsync<ResponseDto>(productDto);
+            ResponseDto responseDto =   (ResponseDto)model;
+            if (responseDto != null && responseDto.IsSucess)
+            {
+                return RedirectToAction(nameof(ProductIndex));
+            }
+        }
+        return View(model);
+    }
+
+    public IActionResult Delete()
     {
         throw new NotImplementedException();
     }

@@ -6,7 +6,7 @@
     </div>
     <div class="col">
         <div class="text-end">
-            <a asp-action="Create" class="btn-outline-info">Create</a>
+            <a asp-action="ProductCreate" class="btn-outline-info">Create</a>
         </div>
     </div>
 
@@ -24,6 +24,10 @@
                 <td> @item.Name </td>
                 <td> @item.CategoryName </td>
                 <td> @item.Price </td>
+                <td> <a asp-action="ProductEdit" class="btn btn-success" asp-route-productId="@item.ProductId"> <i class="fas fa-edit"></i></a>
+                   </td>
+                <td> <a asp-action="Delete" class="btn btn-danger" asp-route-productId="@item.ProductId"><i class="fas fa-trash"></i></a>
+                    </td>
              </tr>
             }
         

@@ -64,7 +64,33 @@ namespace MangoTests
         public void DeserialzedObject_InputJsonString_ReturnProductDto2()
         {
 
-            object jsonsObj = new
+            
+//   @" {+
+//  'isSucess': false",
+//  "result": [
+//    {
+//                "productId": 1,
+//      "name": "Samosa",
+//      "price": 15,
+//      "description": "Praesent scelerisque, mi sed ultrices condimentum, lacus ipsum viverra massa, in lobortis sapien eros in arcu. Quisque vel lacus ac magna vehicula sagittis ut non lacus.<br/>Sed volutpat tellus lorem, lacinia tincidunt tellus varius nec. Vestibulum arcu turpis, facilisis sed ligula ac, maximus malesuada neque. Phasellus commodo cursus pretium.",
+//      "imageUrl": "https://dotnetmasterynew.blob.core.windows.net/mango/14.jpg",
+//      "categoryName": "Appetizer"
+//    },
+//    {
+//                "productId": 2,
+//      "name": "Paneer Tikka",
+//      "price": 13.99,
+//      "description": "Praesent scelerisque, mi sed ultrices condimentum, lacus ipsum viverra massa, in lobortis sapien eros in arcu. Quisque vel lacus ac magna vehicula sagittis ut non lacus.<br/>Sed volutpat tellus lorem, lacinia tincidunt tellus varius nec. Vestibulum arcu turpis, facilisis sed ligula ac, maximus malesuada neque. Phasellus commodo cursus pretium.",
+//      "imageUrl": "https://dotnetmasterynew.blob.core.windows.net/mango/12.jpg",
+//      "categoryName": "Appetizer"
+//    },
+   
+//  ],
+//  "displayMessage": null,
+//  "errorMessages": null
+//}";
+
+        object jsonsObj = new
             {
                 productId = 1,
                 name = "Samosa",
@@ -73,7 +99,7 @@ namespace MangoTests
             //var jsonObject = new object(){ productId:1, name: "Samosa", price:15 };
             var jsonString = "[{'productId':1,'name':'Samosa','price':15}]";
             //var actual = JsonConvert.SerializeObject(jsonsObj);
-            var actual2 = JsonConvert.DeserializeObject<List<object>>(jsonString);
+            var actual2 = JsonConvert.DeserializeObject<List<ProductDto>>(jsonString);
 
             //Assert.That(actual, Is.Not.Null);
             Assert.That(actual2, Is.Not.Null);

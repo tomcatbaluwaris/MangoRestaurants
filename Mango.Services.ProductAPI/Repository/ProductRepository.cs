@@ -27,7 +27,9 @@ public class ProductRepository: IProductRepository
 
     public async Task<ProductDto> GetProductById(int id)
     {
-     return   _mapper.Map<ProductDto>(await _applicationDbContext.Products.FirstOrDefaultAsync(item => item.ProductId == id));
+        var product = await _applicationDbContext.Products.FirstOrDefaultAsync(item => item.ProductId == id);
+        var productDto = _mapper.Map<Product, ProductDto>(product);
+        return productDto;
     }
 
     public async Task<ProductDto> CreateUpdateProduct(ProductDto productDto)
