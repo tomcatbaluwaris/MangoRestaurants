@@ -13,7 +13,7 @@ public interface IProductService
     //
     Task<object> UpdateProductAsync<T>(ProductDto productDto);
     //
-    // Task<T?> DeleteProductAsync<T>(int productId);
+    Task<object?> DeleteProductAsync<T>(int productId);
 
 
 

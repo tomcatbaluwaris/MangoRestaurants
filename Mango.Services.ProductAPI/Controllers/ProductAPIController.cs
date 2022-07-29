@@ -50,7 +50,7 @@ public class ProductAPIController : ControllerBase
         {
             var product = await productRepository.GetProductById(id);
             if (product == null) throw new ArgumentNullException(nameof(product));
-            _response.Result = product;
+        _response.Result = product;
             return _response;
         }
         catch (Exception e)
@@ -114,11 +114,12 @@ public class ProductAPIController : ControllerBase
     }
 
         [HttpDelete]
-        public async Task<object> Delete(ProductDto productDto)
+        [Route("{id}")]
+        public async Task<object> Delete(int id)
         {
             try
             {
-                var isDeleteProduct = await productRepository.DeleteProduct(productDto.ProductId);
+                var isDeleteProduct = await productRepository.DeleteProduct(id);
                 _response.Result = isDeleteProduct;
                 return _response;
             }

@@ -60,17 +60,17 @@ public class ProductService : BaseService, IProductService
             }
         );
     }
-    //
-    // public async Task<T> DeleteProductAsync<T>(int productId)
-    // {
-    //     var apiProducts = "/api/products/";
-    //     return await SendAsync<T>(new ApiRequest() 
-    //         {
-    //             ApiType = SD.ApiType.Delete,
-    //             Url = $"{SD.ProductApiBase}{apiProducts}{productId}",
-    //             AccessToken = ""
-    //             
-    //         }
-    //     );
-    // }
+    
+    public async Task<object> DeleteProductAsync<T>(int productId)
+    {
+        var apiProducts = "/api/products/";
+        return await SendAsync<T>(new ApiRequest() 
+            {
+                ApiType = SD.ApiType.Delete,
+                Url = $"{SD.ProductApiBase}{apiProducts}{productId}",
+                AccessToken = ""
+                
+            }
+        );
+    }
 }

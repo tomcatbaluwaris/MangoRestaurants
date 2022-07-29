@@ -78,8 +78,46 @@ public class ProductController : Controller
         return View(productDto);
     }
 
-    public IActionResult Delete()
+    
+    public async Task<IActionResult> ProductDelete(int productId)
     {
-        throw new NotImplementedException();
+        var  response = await _productService.GetProductByIdAsync<ResponseDto>(productId);
+        ResponseDto responseDto =   (ResponseDto)response;
+        ProductDto productDto = new ProductDto();
+        if (responseDto != null && responseDto.IsSucess)
+        {
+            productDto = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(responseDto.Result));
+            return View(productDto);
+        }
+
+        return NotFound();
     }
+
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ProductDelete(ProductDto productDto)
+    {
+    // try
+        // {
+            if (productDto.ProductId > 0)
+            {
+                ResponseDto? responseDto = (await _productService.DeleteProductAsync<ResponseDto>(productDto.ProductId)) as ResponseDto;
+                if (responseDto != null && responseDto.IsSucess)
+                {
+                    return RedirectToAction(nameof(ProductIndex));
+                }
+            }
+            return View(productDto);
+        // }
+        // catch (Exception e)
+        // {
+        //     Console.WriteLine(e);
+        //     throw;
+        // }
+
+        return NotFound();
+
+    }
+    
 }
