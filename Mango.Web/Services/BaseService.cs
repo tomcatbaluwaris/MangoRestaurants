@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using Mango.Web;
 using Mango.Web.Models;
 using Newtonsoft.Json;
@@ -26,6 +27,7 @@ public class BaseService : IBaseService, IDisposable
 
     public async Task<object> SendAsync<T>(ApiRequest apiRequest)
     {
+        string? apiRequestAccessToken = null;
         try
         {
             var httpClient = HttpClient.CreateClient("MangoApi");
@@ -43,6 +45,12 @@ public class BaseService : IBaseService, IDisposable
                 }
             }
 
+
+            if (!string.IsNullOrEmpty(apiRequestAccessToken))
+            {
+                apiRequestAccessToken = apiRequest.AccessToken;
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(apiRequestAccessToken);
+            }
             HttpResponseMessage response = null;
             switch (apiRequest.ApiType)
             {
@@ -82,6 +90,5 @@ public class BaseService : IBaseService, IDisposable
             return apiResponseDto;
           
         }
-       
     }
     }

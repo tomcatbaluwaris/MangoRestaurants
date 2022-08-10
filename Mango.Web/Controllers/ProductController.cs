@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 // ReSharper disable once RedundantUsingDirective
 using System;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MangoWeb.Controllers;
 
@@ -18,8 +20,9 @@ public class ProductController : Controller
     
     public async Task<IActionResult> ProductIndex()
     {
+        var token = await GetToken();
         List<ProductDto>? list = new List<ProductDto>();
-        var response = await _productService.GetAllProductsAsync<ResponseDto>();
+        var response = await _productService.GetAllProductsAsync<ResponseDto>(token);
         ResponseDto responseDto = (ResponseDto)response;
         var jsonString = Convert.ToString(responseDto.Result);
         if (responseDto != null && responseDto.IsSucess)
@@ -38,7 +41,8 @@ public class ProductController : Controller
         object model = null;
         if (ModelState.IsValid)
         {
-            model = await _productService.CreateProductAsync<ResponseDto>(productDto);
+            var token = await HttpContext.GetTokenAsync("access token");
+            model = await _productService.CreateProductAsync<ResponseDto>(productDto, token);
             ResponseDto responseDto =   (ResponseDto)model;
             if (responseDto != null && responseDto.IsSucess)
             {
@@ -50,7 +54,8 @@ public class ProductController : Controller
 
     public async Task<IActionResult> ProductEdit(int productId)
     {
-      var  response = await _productService.GetProductByIdAsync<ResponseDto>(productId);
+        var token = await GetToken();
+      var  response = await _productService.GetProductByIdAsync<ResponseDto>(productId, token);
             ResponseDto responseDto =   (ResponseDto)response;
             ProductDto productDto = new ProductDto();
             if (responseDto != null && responseDto.IsSucess)
@@ -69,7 +74,8 @@ public class ProductController : Controller
         object model = null;
         if (ModelState.IsValid)
         {
-            ResponseDto responseDto = await _productService.UpdateProductAsync<ResponseDto>(productDto) as ResponseDto;
+            var token = await GetToken();
+            ResponseDto responseDto = await _productService.UpdateProductAsync<ResponseDto>(productDto, token) as ResponseDto;
             if (responseDto != null && responseDto.IsSucess)
             {
                 return RedirectToAction(nameof(ProductIndex));
@@ -78,10 +84,11 @@ public class ProductController : Controller
         return View(productDto);
     }
 
-    
+    // [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ProductDelete(int productId)
     {
         var  response = await _productService.GetProductByIdAsync<ResponseDto>(productId);
+        var token = await GetToken();
         ResponseDto responseDto =   (ResponseDto)response;
         ProductDto productDto = new ProductDto();
         if (responseDto != null && responseDto.IsSucess)
@@ -93,7 +100,7 @@ public class ProductController : Controller
         return NotFound();
     }
 
-    
+    // [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ProductDelete(ProductDto productDto)
@@ -102,7 +109,8 @@ public class ProductController : Controller
         // {
             if (productDto.ProductId > 0)
             {
-                ResponseDto? responseDto = (await _productService.DeleteProductAsync<ResponseDto>(productDto.ProductId)) as ResponseDto;
+                var token = await GetToken();
+                ResponseDto? responseDto = (await _productService.DeleteProductAsync<ResponseDto>(productDto.ProductId, token)) as ResponseDto;
                 if (responseDto != null && responseDto.IsSucess)
                 {
                     return RedirectToAction(nameof(ProductIndex));
@@ -118,6 +126,16 @@ public class ProductController : Controller
 
         return NotFound();
 
+    }
+
+
+    public async Task<string?> GetToken()
+    {
+        string? token = await HttpContext.GetTokenAsync("access token");
+        if (token != null) 
+        {return token;}
+
+        return null;
     }
     
 }

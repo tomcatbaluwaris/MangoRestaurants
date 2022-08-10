@@ -1,69 +1,70 @@
-﻿using System.Net;
-using AutoMapper;
+﻿using AutoMapper;
 using Mango.Services.ProductAPI.DbContexts;
 using Mango.Services.ProductAPI.Models;
-using Mango.Services.ProductAPI.Models.Dto;
+using Mango.Services.ProductAPI.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Mango.Services.ProductAPI.Repository;
-
-public class ProductRepository: IProductRepository
+namespace Mango.Services.ProductAPI.Repository
 {
-    private ApplicationDbContext _applicationDbContext;
-
-    private IMapper _mapper;
-
-    public ProductRepository(ApplicationDbContext applicationDbContext, IMapper mapper)
+    public class ProductRepository : IProductRepository
     {
-        _applicationDbContext = applicationDbContext;
-        _mapper = mapper;
-    }
+        private readonly ApplicationDbContext _db;
+        private IMapper _mapper;
 
-    public async Task<IEnumerable<ProductDto>> GetProducts()
-    {
-        var products = await _applicationDbContext.Products.ToListAsync();
-        return _mapper.Map<List<ProductDto>>(products);
-    }
-
-    public async Task<ProductDto> GetProductById(int id)
-    {
-        var product = await _applicationDbContext.Products.FirstOrDefaultAsync(item => item.ProductId == id);
-        var productDto = _mapper.Map<Product, ProductDto>(product);
-        return productDto;
-    }
-
-    public async Task<ProductDto> CreateUpdateProduct(ProductDto productDto)
-    {
-        var product = _mapper.Map<ProductDto, Product>(productDto);
-        if (productDto.ProductId > 0)
+        public ProductRepository(ApplicationDbContext db, IMapper mapper)
         {
-            _applicationDbContext.Update(product);
-        }
-        else
-        {
-            _applicationDbContext.Products.Add(product);
+            _db = db;
+            _mapper = mapper;
         }
 
-        await _applicationDbContext.SaveChangesAsync();
-        return _mapper.Map<Product, ProductDto>(product);
-    }
-
-    public async Task<bool> DeleteProduct(int productId)
-    {
-        try
+        public async Task<ProductDto> CreateUpdateProduct(ProductDto productDto)
         {
-            var product = await _applicationDbContext.Products.FirstOrDefaultAsync(item => item.ProductId == productId);
-            if (product == null) return false;
-
-            _applicationDbContext.Remove(product);
-            await _applicationDbContext.SaveChangesAsync();
-            return true;
+            Product product = _mapper.Map<ProductDto, Product>(productDto);
+            if (product.ProductId > 0)
+            {
+                _db.Products.Update(product);
+            }
+            else
+            {
+                _db.Products.Add(product);
+            }
+            await _db.SaveChangesAsync();
+            return _mapper.Map<Product, ProductDto>(product);
         }
-        catch (Exception e)
+
+        public async Task<bool> DeleteProduct(int productId)
         {
-            return false;
+            try{
+                Product product = await _db.Products.FirstOrDefaultAsync(u => u.ProductId == productId);
+                if (product == null)
+                {
+                    return false;
+                }
+                _db.Products.Remove(product);
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
-       
 
+        public async Task<ProductDto> GetProductById(int productId)
+        {
+            Product product = await _db.Products.Where(x=>x.ProductId==productId).FirstOrDefaultAsync();
+            return _mapper.Map<ProductDto>(product);
+        }
+
+        public async Task<IEnumerable<ProductDto>> GetProducts()
+        {
+            List<Product> productList = await _db.Products.ToListAsync();
+            return _mapper.Map<List<ProductDto>>(productList);
+
+        }
     }
 }

@@ -1,25 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Mango.Services.ProductAPI.Models.Dto
+namespace Mango.Services.ProductAPI.Models.Dtos
 {
     public class ProductDto
     {
-        [Key]
         public int ProductId { get; set; }
-
-        [Required]
         public string Name { get; set; }
-
         public double Price { get; set; }
-
-
         public string Description { get; set; }
-
-
-        public string ImageUrl { get; set; }
-
         public string CategoryName { get; set; }
-
-
+        public string ImageUrl { get; set; }
     }
 }
