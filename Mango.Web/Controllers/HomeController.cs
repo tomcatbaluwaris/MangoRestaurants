@@ -63,9 +63,18 @@ namespace Mango.Web.Controllers
             return this.RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Details()
+        public async Task<IActionResult> Details(int productId)
         {
-            throw new NotImplementedException();
+            ProductDto productDto = new ProductDto();
+            ResponseDto response = (ResponseDto)await _productService.GetProductByIdAsync<ResponseDto>(productId);
+            if (response == null) throw new ArgumentNullException(nameof(response));
+            if (response.IsSucess)
+            {
+                productDto = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(response.Result));
+            }
+
+            return View(productDto);
+            
         }
     }
 }

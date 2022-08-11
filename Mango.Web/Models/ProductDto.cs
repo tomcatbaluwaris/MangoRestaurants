@@ -4,6 +4,10 @@ namespace Mango.Web.Models
 {
     public class ProductDto
     {
+        public ProductDto()
+        {
+            Count = 1;
+        }
         [Key]
         public int ProductId { get; set; }
 
@@ -19,6 +23,9 @@ namespace Mango.Web.Models
         public string ImageUrl { get; set; }
 
         public string CategoryName { get; set; }
+
+        [Range(0,100)]
+        public int Count { get; set; }
 
 
     }
