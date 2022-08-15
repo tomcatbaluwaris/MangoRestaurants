@@ -18,4 +18,8 @@
     <Folder Include="Pages" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Mango.Services.ShoppingCartApi\Mango.Services.ShoppingCartApi.csproj" />
+  </ItemGroup>
+
 </Project>
